@@ -82,6 +82,7 @@
 <svelte:head>
 	<title>Button Spinner</title>
 </svelte:head>
+<a href="/cont">cont page</a>
 <pre>
 	Use input box below to enter color in any valid format. Change the spinner and/or ButtonSpinner 
   color if applicable for indicating different operations (e.g. red for deleting...) or to
@@ -89,7 +90,6 @@
 </pre>
 <div class="container">
 	<button onclick={toggleVisible}>toggle visible</button>
-	<!-- <button onclick={toggleLoading}>toggle spinner</button> -->
 	<br />
 	<!-- 
     To handle the drag flow, you need some kind of source element (where the drag starts), 
@@ -108,8 +108,8 @@
 		-- drag and drop color def into input box to start spinner for 2 seconds<br />
 		<span id="c1" draggable={true} ondragstart={start} aria-hidden={true}>pink</span>
 		<span id="c2" draggable={true} ondragstart={start} aria-hidden={true}>rgb(200,1,1)</span>
-		<span id="c3" draggable={true} ondragstart={start} aria-hidden={true}>rgba(0,0,210,0.5)</span>
-		<span id="c4" draggable={true} ondragstart={start} aria-hidden={true}>#0000aacc</span>
+		<span id="c3" draggable={true} ondragstart={start} aria-hidden={true}>rgba(0,0,255,0.5)</span>
+		<span id="c4" draggable={true} ondragstart={start} aria-hidden={true}>#00aa66cc</span>
 		<span id="c5" draggable={true} ondragstart={start} aria-hidden={true}>rebeccapurple</span>
 		<span id="c6" draggable={true} ondragstart={start} aria-hidden={true}>hsl(158, 64%, 42%)</span>
 	</p>
