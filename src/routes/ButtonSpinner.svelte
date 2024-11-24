@@ -8,7 +8,7 @@
   or document.getElementsByTagName('ButtonSpinner')[0].
 
 	Component <script lang='ts'> blocks cannot export a variable (except modules <script module lang='ts'>)
-	but coud export functions that return a variable -- so this component exports getSpinner function
+	but could export functions that return a variable -- so this component exports getSpinner function
 	so parent component can get an instance of class SpinnerSetter like so
 		import { onMount } from 'svelte'
 		import SpinnerButton from 'usually $lib/components/Button.setter.svelte' 
@@ -70,18 +70,18 @@
 -->
 <script lang="ts">
 	import { onMount } from 'svelte';
+
 	const setTK = <T, K extends keyof T>(obj: T, property: K, val: T[K]): void => {
-		// obj[property] = val;
+		obj[property] = val;
 		if ('color|size|width|height'.includes(property as string)) {
 			// @ts-expect-error
-			obj.style[property] = 'red';
-		} else if (property === 'hidden') {
-			// @ts-expect-error
-			obj.style.display = val ? 'block' : 'none';
-			hidden = Spinner.hidden;
-		} else if (property === 'cursor') {
-			// @ts-expect-error
-			obj.style.cursor = val ? 'default' : 'not-allowed';
+			obj.style[property] = val;
+		}
+		// else if ('hidden'){
+		//       obj.style.display = (val ? 'block':'none');
+		//   }
+		else if (property === 'cursor') {
+			(obj as HTMLElement).style.cursor = val ? 'default' : 'not-allowed';
 		} else {
 			obj[property] = val;
 		}
@@ -91,6 +91,7 @@
 	function getTK<T, K extends keyof T>(obj: T, property: K): T[K] {
 		return obj[property];
 	}
+
 	class SpinnerSetter {
 		caption = $state<string>('');
 		button = $state<HTMLButtonElement>();
@@ -100,17 +101,17 @@
 		disabled = $state<boolean>(false);
 		cursor = $state<boolean>(false);
 		color = $state<string>('');
-		duration = $state<string>('');
-		size = $state<string>('');
-		top = $state<string>('');
+		duration = '';
+		size = '';
+		top = '';
 		width = $state<string>('');
 		height = $state<string>('');
 
 		get = (prop: string) => {
-			return getTK(Spinner, prop);
+			return getTK(spinner, prop);
 		};
 		set = (prop: string, val: any) => {
-			setTK(Spinner, prop, val);
+			setTK(spinner, prop, val);
 		};
 
 		constructor(
@@ -118,14 +119,14 @@
 			button?: HTMLButtonElement,
 			formaction: string = '?/create',
 			spinOn: boolean = false,
-			hidden: boolean = true,
+			hidden: boolean = false,
 			disabled: boolean = false,
 			cursor: boolean = false,
 			color: string = 'skyblue',
 			duration: string = '1.5s',
 			size: string = '1em',
 			top: string = '0',
-			width: string = 'max-content',
+			width: string = '11rem',
 			height: string = '2rem'
 		) {
 			this.caption = caption;
@@ -143,9 +144,9 @@
 			this.height = height;
 		}
 	}
-	const Spinner = new SpinnerSetter('button');
+	const spinner = new SpinnerSetter('button');
 	export const getSpinner = () => {
-		return Spinner;
+		return spinner;
 	};
 	type ButtonSpinner = {
 		caption: string;
@@ -162,12 +163,13 @@
 		width?: string;
 		height?: string;
 	};
+
 	let {
 		caption = 'button',
 		button = $bindable(),
 		formaction,
-		spinOn = $bindable(Spinner.spinOn),
-		hidden = $bindable(Spinner.hidden),
+		spinOn = $bindable(spinner.spinOn),
+		hidden = $bindable(spinner.hidden),
 		disabled = $bindable(false),
 		cursor = $bindable(true),
 		color = $bindable(`skyblue`),
@@ -177,15 +179,15 @@
 		width = 'max-content',
 		height = '2rem'
 	}: ButtonSpinner = $props();
+
 	onMount(() => {
-		let cursor = 'cursor';
-		// @ts-expect-error
-		// button.style[cursor] = 'default';
-		// console.log(button.style);
+		let width = 'width';
+		// button.style[width] = '14rem'
+		console.log(button.style);
 	});
 </script>
 
-{#snippet spinner(color: string)}
+{#snippet _spinner(color: string)}
 	<!-- styling for a spinner itself -->
 	<div
 		class="spinner"
@@ -204,7 +206,7 @@
 	<button
 		bind:this={button}
 		type="submit"
-		{hidden}
+		style:display={spinner.hidden ? 'none' : 'block'}
 		{formaction}
 		{disabled}
 		style:cursor={cursor ? 'pointer' : 'not-allowed'}
@@ -212,11 +214,11 @@
 		style:height
 		style:padding="4px 1.5rem"
 	>
-		{#if spinOn || Spinner.spinOn}
+		{#if spinOn || spinner.spinOn}
 			<!-- NOTE: must have ancestor with position relative to get proper position -->
-			{@render spinner(color)}
+			{@render _spinner(color)}
 		{/if}
-		{Spinner.caption ?? caption}
+		{spinner.caption ?? caption}
 	</button>
 </p>
 

@@ -6,28 +6,30 @@
 	let spinner: any;
 	let btnDelete: HTMLButtonElement;
 	let spinOn = false,
-		hidden = false, // must be defined as spinner.hidden cannot be toggled true/false like hidden variable
 		disabled = false,
 		cursor = true,
-		color = 'skyblue',
-		caption = 'Create Todo';
+		width = '10rem',
+		height = '2rem',
+		color = 'skyblue';
 
-	// let hidden = false;
 	const colors = [
 		'pink',
 		'rgb(200,1,1)',
 		'rgba(0,0,210,0.5)',
 		'#0000aacc',
+		'hsl(138, 60%, 35%)',
 		'rebeccapurple',
-		'hsl(158, 64%, 42%)',
-		'green'
+		'hsl(64, 68%, 40%)',
+		'green',
+		'red',
+		'orange'
 	];
 	const toggleVisible = () => {
-		hidden = !hidden;
+		spinner.hidden = !spinner.hidden;
 		// btnDelete.style.display = btnDelete.style.display === 'none' ? 'block' : 'none';
 	};
 	const toggleLoading = () => {
-		spinOn = !spinOn;
+		// loading = !loading;
 		spinner.spinOn = !spinner.spinOn;
 	};
 	const toggleAction = () => {
@@ -54,8 +56,8 @@
 	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		const id = event.dataTransfer?.getData('text') as string;
-		(event.target as HTMLInputElement).value = color = document.getElementById(id)
-			?.innerText as string;
+		color = document.getElementById(id)?.innerText as string;
+		(event.target as HTMLInputElement).value = color;
 
 		toggleAction();
 		setTimeout(() => {
@@ -63,7 +65,7 @@
 		}, 2000);
 	};
 	const spinWithRandomColor = (event: MouseEvent) => {
-		// spinOn = !spinOn;
+		// loading = !loading;
 		spinner.spinOn = !spinner.spinOn;
 		spinner.caption = spinner.spin === 'button' ? 'spinning...' : 'button';
 		if (event.type === 'mouseleave') return;
@@ -75,9 +77,12 @@
 	};
 	const cursorNotAllowed = () => {
 		cursor = !cursor;
-		// spinner.cursor = !spinner.cursor
-		spinner.height = '3rem';
+		width = '20rem';
+		height = '3rem';
+		// console.log('cursor',_cursor, spinner.cursor)
+		console.log('width', width, spinner.width);
 	};
+
 	onMount(() => {
 		// get reference to SpinnerSetter instance
 		spinner = B.getSpinner();
@@ -111,7 +116,7 @@
 	<p style="margin:0;padding:0;">
 		-- drag and drop yellow color def into input box to start colored spinner for 2 seconds<br />
 		{#each colors as color, ix}
-			{#if ix === 4}
+			{#if ix === 5}
 				<span style="display:block;margin-top:8px"></span>
 			{/if}
 			<span id={`c${ix + 1}`} draggable={true} ondragstart={start} aria-hidden={true}>{color}</span>
@@ -127,7 +132,6 @@
 		caption="Create Todo"
 		formaction="?/https://www.w3schools.com/tags/tag_button.asp"
 		bind:cursor
-		bind:hidden
 		bind:disabled
 		size="1.3rem"
 		width="10rem"
@@ -181,5 +185,6 @@ above button to observe cursor is now {cursor ? 'default' : 'not-allowed'}
 		background-color: cornsilk;
 		margin-top: 1rem;
 		cursor: default;
+		/* color:hsl(64, 68%, 40%) */
 	}
 </style>
