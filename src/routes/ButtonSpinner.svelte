@@ -114,6 +114,7 @@
 			setTK(spinner, prop, val);
 		};
 
+		// put default values in constructor to make fields optional
 		constructor(
 			caption: string,
 			button?: HTMLButtonElement,
@@ -148,6 +149,8 @@
 	export const getSpinner = () => {
 		return spinner;
 	};
+
+	// only caption and button are required fields in $props()
 	type ButtonSpinner = {
 		caption: string;
 		button: HTMLButtonElement;
@@ -172,7 +175,7 @@
 		hidden = $bindable(spinner.hidden),
 		disabled = $bindable(false),
 		cursor = $bindable(true),
-		color = $bindable(`skyblue`),
+		color = $bindable(spinner.color),
 		duration = `1.5s`,
 		size = `1em`,
 		top = `0`,
@@ -202,7 +205,7 @@
 {/snippet}
 
 <p style="position:relative;margin:0;padding:0;">
-	<!-- styling for a button -->
+	<!-- styling for a MAIN PART button -->
 	<button
 		bind:this={button}
 		type="submit"
@@ -210,8 +213,8 @@
 		{formaction}
 		{disabled}
 		style:cursor={cursor ? 'pointer' : 'not-allowed'}
-		style:width
-		style:height
+		style:width={spinner.width ?? 'max-content'}
+		style:height={spinner.height ?? '2rem'}
 		style:padding="4px 1.5rem"
 	>
 		{#if spinOn || spinner.spinOn}

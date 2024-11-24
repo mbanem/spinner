@@ -8,7 +8,6 @@
 	let spinOn = false,
 		disabled = false,
 		cursor = true,
-		width = '10rem',
 		height = '2rem',
 		color = 'skyblue';
 
@@ -37,7 +36,7 @@
 		// NOTE: cannot change spinner color while spinning
 		// spinner.color = spinner.spinOn ? 'red' : 'black'
 		btnDelete.style.color = spinner.spinOn ? 'red' : 'black';
-		// btnDelete.style.width = btnDelete.style.width==='12rem'? '10rem':'12rem'
+		spinner.width = spinner.width === '10rem' ? '15rem' : '10rem';
 		spinner.caption = spinner.spinOn ? 'Creating...' : 'Create Todo';
 		const btn = document.querySelector('#action') as HTMLButtonElement;
 		btn.innerText = spinner.spinOn ? 'stop action' : 'start action';
@@ -77,10 +76,10 @@
 	};
 	const cursorNotAllowed = () => {
 		cursor = !cursor;
-		width = '20rem';
-		height = '3rem';
+		spinner.width = spinner.width === '11rem' ? '20rem' : '11rem';
+		spinner.height = spinner.height === '2rem' ? '3rem' : '2rem';
 		// console.log('cursor',_cursor, spinner.cursor)
-		console.log('width', width, spinner.width);
+		console.log('width', spinner.width);
 	};
 
 	onMount(() => {
@@ -89,7 +88,7 @@
 	});
 </script>
 
-<svelte:head>
+style<svelte:head>
 	<title>Button Spinner</title>
 </svelte:head>
 <pre>
@@ -134,7 +133,7 @@
 		bind:cursor
 		bind:disabled
 		size="1.3rem"
-		width="10rem"
+		width="18rem"
 		height="2rem"
 		bind:color
 		top="-14px"
