@@ -73,18 +73,18 @@
 
 	const setTK = <T, K extends keyof T>(obj: T, property: K, val: T[K]): void => {
 		obj[property] = val;
-		if ('color|size|width|height'.includes(property as string)) {
-			// @ts-expect-error
-			obj.style[property] = val;
-		}
-		// else if ('hidden'){
-		//       obj.style.display = (val ? 'block':'none');
-		//   }
-		else if (property === 'cursor') {
-			(obj as HTMLElement).style.cursor = val ? 'default' : 'not-allowed';
-		} else {
-			obj[property] = val;
-		}
+		// if ('color|size|width|height'.includes(property as string)) {
+		// 	// @ts-expect-error
+		// 	obj.style[property] = val;
+		// }
+		// // else if ('hidden'){
+		// //       obj.style.display = (val ? 'block':'none');
+		// //   }
+		// else if (property === 'cursor') {
+		// 	(obj as HTMLElement).style.cursor = val ? 'default' : 'not-allowed';
+		// } else {
+		// 	obj[property] = val;
+		// }
 	};
 
 	// Generic Accessor get attribute value on an instance of type T
