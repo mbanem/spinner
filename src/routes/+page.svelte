@@ -6,7 +6,7 @@
 	let spinner: any;
 	let btnDelete: HTMLButtonElement;
 	let spinOn = false,
-		hidden = false,
+		hidden = false, // must be defined as spinner.hidden cannot be toggled true/false like hidden variable
 		disabled = false,
 		cursor = true,
 		color = 'skyblue',
@@ -23,12 +23,11 @@
 		'green'
 	];
 	const toggleVisible = () => {
-		// hidden = !hidden; // this work as well
-		spinner.hidden = !spinner.hidden;
+		hidden = !hidden;
 		// btnDelete.style.display = btnDelete.style.display === 'none' ? 'block' : 'none';
 	};
 	const toggleLoading = () => {
-		// spinOn = !spinOn;
+		spinOn = !spinOn;
 		spinner.spinOn = !spinner.spinOn;
 	};
 	const toggleAction = () => {
@@ -55,8 +54,8 @@
 	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		const id = event.dataTransfer?.getData('text') as string;
-		color = document.getElementById(id)?.innerText as string;
-		(event.target as HTMLInputElement).value = color;
+		(event.target as HTMLInputElement).value = color = document.getElementById(id)
+			?.innerText as string;
 
 		toggleAction();
 		setTimeout(() => {
@@ -64,7 +63,7 @@
 		}, 2000);
 	};
 	const spinWithRandomColor = (event: MouseEvent) => {
-		// spinOn = !loading;
+		// spinOn = !spinOn;
 		spinner.spinOn = !spinner.spinOn;
 		spinner.caption = spinner.spin === 'button' ? 'spinning...' : 'button';
 		if (event.type === 'mouseleave') return;
@@ -72,16 +71,12 @@
 			[1, 2, 3]
 				.reduce((acc) => acc + `${Math.floor(Math.random() * 1000) % 255},`, 'rgb(')
 				.slice(0, -2) + ')';
-		// color = 'green'		// color works for both bind variable and spinner.color
 		color = rgb;
 	};
 	const cursorNotAllowed = () => {
 		cursor = !cursor;
 		// spinner.cursor = !spinner.cursor
-		console.log(spinner.height);
 		spinner.height = '3rem';
-		// console.log('cursor',_cursor, spinner.cursor)
-		console.log('cursor', cursor);
 	};
 	onMount(() => {
 		// get reference to SpinnerSetter instance
@@ -114,7 +109,7 @@
 		ondragover={allowDrop}
 	/>
 	<p style="margin:0;padding:0;">
-		-- drag and drop yellow color def into input box to start collored spinner for 2 seconds<br />
+		-- drag and drop yellow color def into input box to start colored spinner for 2 seconds<br />
 		{#each colors as color, ix}
 			{#if ix === 4}
 				<span style="display:block;margin-top:8px"></span>
@@ -130,7 +125,7 @@
 		bind:button={btnDelete}
 		bind:spinOn
 		caption="Create Todo"
-		formaction="?/createTodo"
+		formaction="?/https://www.w3schools.com/tags/tag_button.asp"
 		bind:cursor
 		bind:hidden
 		bind:disabled
@@ -140,12 +135,6 @@
 		bind:color
 		top="-14px"
 	></ButtonSpinner>
-
-	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
-		click to toggle cursor to 'not-allowed' and then hover over 
-		above button to observe cursor is now {cursor ? 'default' : 'not-allowed'}
-	</pre>
-
 	<div
 		class="div-hover"
 		onmouseenter={spinWithRandomColor}
@@ -154,6 +143,10 @@
 	>
 		Hover over to spin with random spinner color
 	</div>
+	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
+click to toggle cursor to 'not-allowed' and then hover over 
+above button to observe cursor is now {cursor ? 'default' : 'not-allowed'}
+	</pre>
 </div>
 
 <style>

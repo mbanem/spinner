@@ -30,7 +30,7 @@
 
 
 	Component features a 3/4 circle skyblue spinner. In order to start and stop spinning its spinOn
-	property could be setshould be bound to a parent's boolean variable, e.g. 
+	property could be set should be bound to a parent's boolean variable, e.g. 
     let loading:boolean = false; (not a $state rune)
 	Spin starts when loading variable is set to true and stops when it is turn to false.
 	Mandatory props are 
@@ -78,6 +78,7 @@
 		} else if (property === 'hidden') {
 			// @ts-expect-error
 			obj.style.display = val ? 'block' : 'none';
+			hidden = Spinner.hidden;
 		} else if (property === 'cursor') {
 			// @ts-expect-error
 			obj.style.cursor = val ? 'default' : 'not-allowed';
@@ -109,7 +110,6 @@
 			return getTK(Spinner, prop);
 		};
 		set = (prop: string, val: any) => {
-			console.log('setTK', prop, val);
 			setTK(Spinner, prop, val);
 		};
 
@@ -167,7 +167,7 @@
 		button = $bindable(),
 		formaction,
 		spinOn = $bindable(Spinner.spinOn),
-		hidden = $bindable(true),
+		hidden = $bindable(Spinner.hidden),
 		disabled = $bindable(false),
 		cursor = $bindable(true),
 		color = $bindable(`skyblue`),
@@ -180,8 +180,8 @@
 	onMount(() => {
 		let cursor = 'cursor';
 		// @ts-expect-error
-		button.style[cursor] = 'default';
-		console.log(button.style);
+		// button.style[cursor] = 'default';
+		// console.log(button.style);
 	});
 </script>
 
