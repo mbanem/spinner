@@ -1,132 +1,3 @@
-<script module lang="ts">
-	let button: HTMLButtonElement; // just to avoid constructor's complain
-	class SpinnerSetter {
-		private _caption = $state<string>('');
-		private _button = $state<HTMLButtonElement>();
-		private _formaction = $state<string>('');
-		private _spinOn = $state<boolean>(false);
-		private _hidden = $state<boolean>(false);
-		private _disabled = $state<boolean>(false);
-		private _cursor = $state<boolean>(false);
-		private _color = $state<string>('');
-		private _duration = $state<string>('');
-		private _size = $state<string>('');
-		private _top = $state<string>('');
-		private _width = $state<string>('');
-		private _height = $state<string>('');
-
-		get caption() {
-			return this._caption;
-		}
-		set caption(value: string) {
-			this._caption = value;
-		}
-		get button() {
-			return this._button ?? button;
-		}
-		set button(value: HTMLButtonElement) {
-			this._button = value;
-		}
-		get formaction() {
-			return this._formaction;
-		}
-		set formaction(value: string) {
-			this._formaction = value;
-		}
-		get spinOn() {
-			return this._spinOn;
-		}
-		set spinOn(value: boolean) {
-			this._spinOn = value;
-		}
-		get hidden() {
-			return this._hidden;
-		}
-		set hidden(value: boolean) {
-			this._hidden = value;
-		}
-		get disabled() {
-			return this._disabled;
-		}
-		set disabled(value: boolean) {
-			this._disabled = value;
-		}
-		get cursor() {
-			return this._cursor;
-		}
-		set cursor(value: boolean) {
-			this._cursor = value;
-		}
-		get color() {
-			return this._color;
-		}
-		set color(value: string) {
-			this._color = value;
-		}
-		get duration() {
-			return this._duration;
-		}
-		set duration(value: string) {
-			this._duration = value;
-		}
-		get size() {
-			return this._size;
-		}
-		set size(value: string) {
-			this._size = value;
-		}
-		get top() {
-			return this._top;
-		}
-		set top(value: string) {
-			this._top = value;
-		}
-		get width() {
-			return this._width;
-		}
-		set width(value: string) {
-			this._width = value;
-		}
-		get height() {
-			return this._height;
-		}
-		set height(value: string) {
-			this._height = value;
-		}
-
-		constructor(
-			caption: string,
-			button?: HTMLButtonElement,
-			formaction: string = '?/create',
-			spinOn: boolean = false,
-			hidden: boolean = true,
-			disabled: boolean = false,
-			cursor: boolean = false,
-			color: string = 'skyblue',
-			duration: string = '1.5s',
-			size: string = '1em',
-			top: string = '0',
-			width: string = 'max-content',
-			height: string = '2rem'
-		) {
-			this._caption = caption;
-			this._button = button;
-			this._formaction = formaction;
-			this._spinOn = spinOn;
-			this._hidden = hidden;
-			this._disabled = disabled;
-			this._cursor = cursor;
-			this._color = color;
-			this._duration = duration;
-			this._size = size;
-			this._top = top;
-			this._width = width;
-			this._height = height;
-		}
-	}
-	export const Spinner = new SpinnerSetter('button');
-</script>
-
 <!--
 @component
 	ButtonSpinner wraps an HTMLButtonElement named button, so it could be bound to a parent variable say:
@@ -136,8 +7,30 @@
   There is no way for now to get reference via document.querySelector('ButtonSpinner')
   or document.getElementsByTagName('ButtonSpinner')[0].
 
+	Component <script lang='ts'> blocks cannot export a variable (except modules <script module lang='ts'>)
+	but coud export functions that return a variable -- so this component exports getSpinner function
+	so parent component can get an instance of class SpinnerSetter like so
+		import { onMount } from 'svelte'
+		import SpinnerButton from 'usually $lib/components/Button.setter.svelte' 
+		let B:typeof ButtonSpinner
+		let spinner:any
+	As B holds getSpinner function the instance of SpinnerSetter is usually got from onMount
+		onMount(()=> {
+			spinner = B.getSpinner()
+		})
+	The spinner exposes all the attributes that ButtonSpinner can accept from HTML markup, like
+		<ButtonSpinner bind:button={btnCreate} caption='Create Todo' hidden={false} bind:color={color} ...>
+
+
+	Every attribute could be bound to sibling parent variable, like color above
+		let color = 'skyblue'     // with or without default value, 'skyblue' in this case
+	and the variable could be changed dynamically having impact on <ButtonSpinner> component, except
+	for color variable if spinner is all at the time.
+
+
+
 	Component features a 3/4 circle skyblue spinner. In order to start and stop spinning its spinOn
-	property should be bound to a parent's boolean variable, e.g. 
+	property could be setshould be bound to a parent's boolean variable, e.g. 
     let loading:boolean = false; (not a $state rune)
 	Spin starts when loading variable is set to true and stops when it is turn to false.
 	Mandatory props are 
@@ -176,6 +69,84 @@
         </ButtonSpinner>
 -->
 <script lang="ts">
+	import { onMount } from 'svelte';
+	const setTK = <T, K extends keyof T>(obj: T, property: K, val: T[K]): void => {
+		// obj[property] = val;
+		if ('color|size|width|height'.includes(property as string)) {
+			// @ts-expect-error
+			obj.style[property] = 'red';
+		} else if (property === 'hidden') {
+			// @ts-expect-error
+			obj.style.display = val ? 'block' : 'none';
+		} else if (property === 'cursor') {
+			// @ts-expect-error
+			obj.style.cursor = val ? 'default' : 'not-allowed';
+		} else {
+			obj[property] = val;
+		}
+	};
+
+	// Generic Accessor get attribute value on an instance of type T
+	function getTK<T, K extends keyof T>(obj: T, property: K): T[K] {
+		return obj[property];
+	}
+	class SpinnerSetter {
+		caption = $state<string>('');
+		button = $state<HTMLButtonElement>();
+		formaction = $state<string>('');
+		spinOn = $state<boolean>(false);
+		hidden = $state<boolean>(false);
+		disabled = $state<boolean>(false);
+		cursor = $state<boolean>(false);
+		color = $state<string>('');
+		duration = $state<string>('');
+		size = $state<string>('');
+		top = $state<string>('');
+		width = $state<string>('');
+		height = $state<string>('');
+
+		get = (prop: string) => {
+			return getTK(Spinner, prop);
+		};
+		set = (prop: string, val: any) => {
+			console.log('setTK', prop, val);
+			setTK(Spinner, prop, val);
+		};
+
+		constructor(
+			caption: string,
+			button?: HTMLButtonElement,
+			formaction: string = '?/create',
+			spinOn: boolean = false,
+			hidden: boolean = true,
+			disabled: boolean = false,
+			cursor: boolean = false,
+			color: string = 'skyblue',
+			duration: string = '1.5s',
+			size: string = '1em',
+			top: string = '0',
+			width: string = 'max-content',
+			height: string = '2rem'
+		) {
+			this.caption = caption;
+			this.button = button;
+			this.formaction = formaction;
+			this.spinOn = spinOn;
+			this.hidden = hidden;
+			this.disabled = disabled;
+			this.cursor = cursor;
+			this.color = color;
+			this.duration = duration;
+			this.size = size;
+			this.top = top;
+			this.width = width;
+			this.height = height;
+		}
+	}
+	const Spinner = new SpinnerSetter('button');
+	export const getSpinner = () => {
+		return Spinner;
+	};
 	type ButtonSpinner = {
 		caption: string;
 		button: HTMLButtonElement;
@@ -195,17 +166,23 @@
 		caption = 'button',
 		button = $bindable(),
 		formaction,
-		spinOn = Spinner.spinOn,
+		spinOn = $bindable(Spinner.spinOn),
 		hidden = $bindable(true),
 		disabled = $bindable(false),
 		cursor = $bindable(true),
-		color = `skyblue`,
+		color = $bindable(`skyblue`),
 		duration = `1.5s`,
 		size = `1em`,
 		top = `0`,
 		width = 'max-content',
 		height = '2rem'
 	}: ButtonSpinner = $props();
+	onMount(() => {
+		let cursor = 'cursor';
+		// @ts-expect-error
+		button.style[cursor] = 'default';
+		console.log(button.style);
+	});
 </script>
 
 {#snippet spinner(color: string)}
@@ -227,7 +204,7 @@
 	<button
 		bind:this={button}
 		type="submit"
-		class:hidden
+		{hidden}
 		{formaction}
 		{disabled}
 		style:cursor={cursor ? 'pointer' : 'not-allowed'}

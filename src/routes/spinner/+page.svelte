@@ -1,30 +1,47 @@
 <script lang="ts">
-	import { onMount} from 'svelte'
+	import { onMount } from 'svelte';
 	import ButtonSpinner from './ButtonSpinner.svelte';
-	// import { getSpinner } from './ButtonSpinner.svelte'
 
-	let B:typeof ButtonSpinner
-	let spinner
+	let B: typeof ButtonSpinner;
+	let spinner: any;
 	let btnDelete: HTMLButtonElement;
-	let caption = 'Create Todo';
-	let loading = false;
-	let hidden = false;
-	let color = 'skyblue';
-	const colors = ['pink','rgb(200,1,1)','rgba(0,0,210,0.5)','#0000aacc','rebeccapurple','hsl(158, 64%, 42%)','green'];
+	let spinOn = false,
+		hidden = false,
+		disabled = false,
+		cursor = true,
+		color = 'skyblue';
+	// let caption = 'Create Todo';
+	// let loading = false;      // controlling spinning via variable, or via spinner.spinOn
+	// let _cursor = true;       // works if <ButtonSpinner attribute is bind:cursor={cursor}
+
+	// let hidden = false;
+	const colors = [
+		'pink',
+		'rgb(200,1,1)',
+		'rgba(0,0,210,0.5)',
+		'#0000aacc',
+		'rebeccapurple',
+		'hsl(158, 64%, 42%)',
+		'green'
+	];
 	const toggleVisible = () => {
 		// hidden = !hidden    // this work as well
-		btnDelete.style.display = btnDelete.style.display === 'none' ? 'block' : 'none';
+		spinner.hidden = !spinner.hidden;
+		// btnDelete.style.display = btnDelete.style.display === 'none' ? 'block' : 'none';
 	};
 	const toggleLoading = () => {
-		loading = !loading;
+		// loading = !loading;
+		spinner.spinOn = !spinner.spinOn;
 	};
 	const toggleAction = () => {
 		toggleLoading();
-		spinner.color = spinner.color === 'red' ? 'black' : 'red';
+		// NOTE: cannot change spinner color while sponning
+		// spinner.color = spinner.spinOn ? 'red' : 'black'
+		btnDelete.style.color = spinner.spinOn ? 'red' : 'black';
 		// btnDelete.style.width = btnDelete.style.width==='12rem'? '10rem':'12rem'
-		spinner.caption = spinner.caption === 'Create Todo' ? 'Creating...' : 'Create Todo';
+		spinner.caption = spinner.spinOn ? 'Creating...' : 'Create Todo';
 		const btn = document.querySelector('#action') as HTMLButtonElement;
-		btn.innerText = btn.innerText === 'start action' ? 'stop action' : 'start action';
+		btn.innerText = spinner.spinOn ? 'stop action' : 'start action';
 	};
 
 	// Drag and Drop functionality.
@@ -40,7 +57,6 @@
 	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		const id = event.dataTransfer?.getData('text') as string;
-		console.log('data', event.dataTransfer);
 		(event.target as HTMLInputElement).value = color = document.getElementById(id)
 			?.innerText as string;
 
@@ -49,16 +65,29 @@
 			toggleAction();
 		}, 2000);
 	};
-	const spinWithRandomColor = (event:MouseEvent) => {
-		spinner.spinOn = !spinner.spinOn
-		spinner.caption = spinner.caption === 'button' ? 'spinning...' : 'button'
+	const spinWithRandomColor = (event: MouseEvent) => {
+		// loading = !loading;
+		spinner.spinOn = !spinner.spinOn;
+		spinner.caption = spinner.spin === 'button' ? 'spinning...' : 'button';
 		if (event.type === 'mouseleave') return;
-		const rgb = [1,2,3].reduce(acc => acc + `${Math.floor(Math.random()*1000)%255},`, 'rgb(').slice(0,-2)+')';
+		const rgb =
+			[1, 2, 3]
+				.reduce((acc) => acc + `${Math.floor(Math.random() * 1000) % 255},`, 'rgb(')
+				.slice(0, -2) + ')';
 		color = rgb;
-	}
-	onMount(()=>{
-		 spinner = B.getSpinner()
-	})
+	};
+	const cursorNotAllowed = () => {
+		cursor = !cursor;
+		// spinner.cursor = !spinner.cursor
+		console.log(spinner.height);
+		spinner.height = '3rem';
+		// console.log('cursor',_cursor, spinner.cursor)
+		console.log('cursor', cursor);
+	};
+	onMount(() => {
+		// get reference to SpinnerSetter instance
+		spinner = B.getSpinner();
+	});
 </script>
 
 <svelte:head>
@@ -87,11 +116,11 @@
 	/>
 	<p style="margin:0;padding:0;">
 		-- drag and drop yellow color def into input box to start collored spinner for 2 seconds<br />
-		{#each colors as color,ix}
+		{#each colors as color, ix}
 			{#if ix === 4}
-				<span style='display:block;margin-top:8px'></span>
+				<span style="display:block;margin-top:8px"></span>
 			{/if}
-			<span id={`c${ix+1}`} draggable={true} ondragstart={start} aria-hidden={true}>{color}</span>
+			<span id={`c${ix + 1}`} draggable={true} ondragstart={start} aria-hidden={true}>{color}</span>
 		{/each}
 	</p>
 	<br />
@@ -100,20 +129,30 @@
 	<ButtonSpinner
 		bind:this={B}
 		bind:button={btnDelete}
-		spinOn={loading}
-		{caption}
+		bind:spinOn
+		caption="Create Todo"
 		formaction="?/https://www.w3schools.com/tags/tag_button.asp"
-		cursor={true}
+		bind:cursor
 		bind:hidden
+		bind:disabled
 		size="1.3rem"
 		width="10rem"
 		height="2rem"
-		{color}
+		bind:color
 		top="-14px"
 	></ButtonSpinner>
-	<div class='div-hover' onmouseenter={spinWithRandomColor} onmouseleave={spinWithRandomColor} aria-hidden={true}>
+	<div
+		class="div-hover"
+		onmouseenter={spinWithRandomColor}
+		onmouseleave={spinWithRandomColor}
+		aria-hidden={true}
+	>
 		Hover over to spin with random spinner color
 	</div>
+	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
+click to toggle cursor to 'not-allowed' and then hower over 
+above button to observe cursor is now {cursor ? 'default' : 'not-allowed'}
+	</pre>
 </div>
 
 <style>
@@ -139,13 +178,14 @@
 		height: 20px;
 		background-color: cornsilk;
 		margin-right: 10px;
-		border-radius:8px;
+		border-radius: 8px;
 		border: 1px solid yellow;
 	}
 	.div-hover {
 		width: max-content;
 		padding: 3px 2rem;
 		background-color: cornsilk;
-		margin-top:1rem;
+		margin-top: 1rem;
+		cursor: default;
 	}
 </style>
