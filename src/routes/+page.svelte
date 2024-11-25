@@ -9,7 +9,7 @@
 		disabled = false,
 		cursor = true,
 		height = '2rem',
-		color = 'skyblue';
+		var_color = 'skyblue';
 
 	const colors = [
 		'pink',
@@ -55,8 +55,8 @@
 	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		const id = event.dataTransfer?.getData('text') as string;
-		color = document.getElementById(id)?.innerText as string;
-		(event.target as HTMLInputElement).value = color;
+		var_color = document.getElementById(id)?.innerText as string;
+		(event.target as HTMLInputElement).value = var_color;
 
 		toggleAction();
 		setTimeout(() => {
@@ -72,7 +72,7 @@
 			[1, 2, 3]
 				.reduce((acc) => acc + `${Math.floor(Math.random() * 1000) % 255},`, 'rgb(')
 				.slice(0, -2) + ')';
-		color = rgb;
+		spinner.color = rgb;
 	};
 	const cursorNotAllowed = () => {
 		cursor = !cursor;
@@ -80,6 +80,37 @@
 		spinner.height = spinner.height === '2rem' ? '3rem' : '2rem';
 		// console.log('cursor',_cursor, spinner.cursor)
 		console.log('width', spinner.width);
+
+		spinner.caption = 'newly created button';
+		spinner.button = btnDelete;
+		spinner.formaction = '?/createTodo';
+		spinner.spinOn = true;
+		spinner.hidden = true;
+		spinner.disabled = true;
+		spinner.cursor = true;
+		spinner.color = 'magenta';
+		spinner.duration = '2s';
+		spinner.size = '2em';
+		spinner.top = '10px';
+		spinner.width = '14rem';
+		spinner.height = '4rem';
+		// got what we wrote
+		// createTodo true true true true magenta 2s 2em 10px 14rem 4rem
+		console.log(
+			spinner.caption,
+			spinner.button,
+			spinner.formaction,
+			spinner.spinOn,
+			spinner.hidden,
+			spinner.disabled,
+			spinner.cursor,
+			spinner.color,
+			spinner.duration,
+			spinner.size,
+			spinner.top,
+			spinner.width,
+			spinner.height
+		);
 	};
 
 	onMount(() => {
@@ -107,7 +138,7 @@ style<svelte:head>
 	<input
 		id="color_input"
 		type="text"
-		bind:value={color}
+		bind:value={var_color}
 		placeholder="enter color"
 		ondrop={drop}
 		ondragover={allowDrop}
@@ -127,16 +158,18 @@ style<svelte:head>
 	<ButtonSpinner
 		bind:this={B}
 		bind:button={btnDelete}
-		bind:spinOn
-		caption="Create Todo"
-		formaction="?/https://www.w3schools.com/tags/tag_button.asp"
-		bind:cursor
-		bind:disabled
-		size="1.3rem"
-		width="18rem"
-		height="2rem"
-		bind:color
-		top="-14px"
+		caption="new_button"
+		formaction="?/createTodo"
+		spinOn={false}
+		hidden={false}
+		disabled={false}
+		cursor={false}
+		color="tomato"
+		duration="2s"
+		size="1em"
+		top="0"
+		width="16em"
+		height="3rem"
 	></ButtonSpinner>
 	<div
 		class="div-hover"

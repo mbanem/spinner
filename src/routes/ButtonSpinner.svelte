@@ -118,12 +118,12 @@
 		constructor(
 			caption: string,
 			button?: HTMLButtonElement,
-			formaction: string = '?/create',
+			formaction: string = '?/deleteTodo',
 			spinOn: boolean = false,
 			hidden: boolean = false,
 			disabled: boolean = false,
 			cursor: boolean = false,
-			color: string = 'skyblue',
+			color: string = 'tomato',
 			duration: string = '1.5s',
 			size: string = '1em',
 			top: string = '0',
@@ -149,6 +149,22 @@
 	export const getSpinner = () => {
 		return spinner;
 	};
+
+	// $inspect(
+	// 	spinner.caption,
+	// 	spinner.button,
+	// 	spinner.formaction,
+	// 	spinner.spinOn,
+	// 	spinner.hidden,
+	// 	spinner.disabled,
+	// 	spinner.cursor,
+	// 	spinner.color,
+	// 	spinner.duration,
+	// 	spinner.size,
+	// 	spinner.top,
+	// 	spinner.width,
+	// 	spinner.height
+	// );
 
 	// only caption and button are required fields in $props()
 	type ButtonSpinner = {
@@ -182,7 +198,7 @@
 		width = 'max-content',
 		height = '2rem'
 	}: ButtonSpinner = $props();
-
+	// ------------------------------------------
 	onMount(() => {
 		let width = 'width';
 		// button.style[width] = '14rem'
@@ -216,14 +232,16 @@
 		style:width={spinner.width ?? 'max-content'}
 		style:height={spinner.height ?? '2rem'}
 		style:padding="4px 1.5rem"
+		style:color={spinner.color}
 	>
 		{#if spinOn || spinner.spinOn}
 			<!-- NOTE: must have ancestor with position relative to get proper position -->
-			{@render _spinner(color)}
+			{@render _spinner(spinner.color)}
 		{/if}
 		{spinner.caption ?? caption}
 	</button>
 </p>
+<p>spinner.color {spinner.color}</p>
 
 <style>
 	.spinner {
