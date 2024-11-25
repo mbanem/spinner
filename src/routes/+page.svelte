@@ -168,7 +168,7 @@
 		duration="2s"
 		size="1em"
 		top="0"
-		width="16em"
+		width="11rem"
 		height="3rem"
 	></ButtonSpinner>
 	<div

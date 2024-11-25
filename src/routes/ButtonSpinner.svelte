@@ -220,6 +220,7 @@
 	></div>
 {/snippet}
 
+<p class="info">spinner.color: {spinner.color}, cursor: {spinner.cursor}</p>
 <p style="position:relative;margin:0;padding:0;">
 	<!-- styling for a MAIN PART button -->
 	<button
@@ -242,18 +243,7 @@
 	</button>
 </p>
 
-<div class="info">
-	spinner.color {spinner.color}
-	{spinner.cursor}
-</div>
-
 <style>
-	.info {
-		width: max-content;
-		padding: 2px 1rem;
-		color: white;
-		background-color: 'tomato';
-	}
 	.spinner {
 		position: absolute;
 		display: inline-block;
@@ -265,7 +255,7 @@
 		animation: var(--duration) infinite rotate;
 		position: absolute;
 		left: 0;
-		top: 3px !important;
+		top: 8px !important;
 	}
 	@keyframes rotate {
 		100% {
@@ -274,5 +264,11 @@
 	}
 	.hidden {
 		display: none;
+	}
+	.info {
+		width: max-content;
+		padding: 2px 1rem;
+		background-color: powderblue;
+		text-wrap: nowrap;
 	}
 </style>
