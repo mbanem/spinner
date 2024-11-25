@@ -7,7 +7,7 @@
 	let btnDelete: HTMLButtonElement;
 	let spinOn = false,
 		disabled = false,
-		cursor = true,
+		// cursor = true,
 		height = '2rem',
 		var_color = 'skyblue';
 
@@ -57,7 +57,7 @@
 		const id = event.dataTransfer?.getData('text') as string;
 		var_color = document.getElementById(id)?.innerText as string;
 		(event.target as HTMLInputElement).value = var_color;
-
+		spinner.color = var_color;
 		toggleAction();
 		setTimeout(() => {
 			toggleAction();
@@ -75,42 +75,40 @@
 		spinner.color = rgb;
 	};
 	const cursorNotAllowed = () => {
-		cursor = !cursor;
+		spinner.cursor = !spinner.cursor;
 		spinner.width = spinner.width === '11rem' ? '20rem' : '11rem';
 		spinner.height = spinner.height === '2rem' ? '3rem' : '2rem';
-		// console.log('cursor',_cursor, spinner.cursor)
-		console.log('width', spinner.width);
 
-		spinner.caption = 'newly created button';
-		spinner.button = btnDelete;
-		spinner.formaction = '?/createTodo';
-		spinner.spinOn = true;
-		spinner.hidden = true;
-		spinner.disabled = true;
-		spinner.cursor = true;
-		spinner.color = 'magenta';
-		spinner.duration = '2s';
-		spinner.size = '2em';
-		spinner.top = '10px';
-		spinner.width = '14rem';
-		spinner.height = '4rem';
+		// spinner.caption = 'newly created button';
+		// spinner.button = btnDelete;
+		// spinner.formaction = '?/createTodo';
+		// spinner.spinOn = true;
+		// spinner.hidden = true;
+		// spinner.disabled = true;
+		// spinner.cursor = true;
+		// spinner.color = 'magenta';
+		// spinner.duration = '2s';
+		// spinner.size = '2em';
+		// spinner.top = '10px';
+		// spinner.width = '14rem';
+		// spinner.height = '4rem';
 		// got what we wrote
 		// createTodo true true true true magenta 2s 2em 10px 14rem 4rem
-		console.log(
-			spinner.caption,
-			spinner.button,
-			spinner.formaction,
-			spinner.spinOn,
-			spinner.hidden,
-			spinner.disabled,
-			spinner.cursor,
-			spinner.color,
-			spinner.duration,
-			spinner.size,
-			spinner.top,
-			spinner.width,
-			spinner.height
-		);
+		// console.log(
+		// 	spinner.caption,
+		// 	spinner.button,
+		// 	spinner.formaction,
+		// 	spinner.spinOn,
+		// 	spinner.hidden,
+		// 	spinner.disabled,
+		// 	spinner.cursor,
+		// 	spinner.color,
+		// 	spinner.duration,
+		// 	spinner.size,
+		// 	spinner.top,
+		// 	spinner.width,
+		// 	spinner.height
+		// );
 	};
 
 	onMount(() => {
@@ -119,14 +117,16 @@
 	});
 </script>
 
-style<svelte:head>
+<svelte:head>
 	<title>Button Spinner</title>
 </svelte:head>
+
 <pre>
 	Use input box below to enter color in any valid format. Change the spinner and/or
 	ButtonSpinner color to indicate different operations (e.g. red for deleting...)
 	or to indicate long running processes.
 </pre>
+
 <div class="container">
 	<button onclick={toggleVisible}>toggle visible</button>
 	<br />
@@ -163,7 +163,7 @@ style<svelte:head>
 		spinOn={false}
 		hidden={false}
 		disabled={false}
-		cursor={false}
+		cursor={true}
 		color="tomato"
 		duration="2s"
 		size="1em"
@@ -181,7 +181,7 @@ style<svelte:head>
 	</div>
 	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
 click to toggle cursor to 'not-allowed' and then hover over 
-above button to observe cursor is now {cursor ? 'default' : 'not-allowed'}
+above button to observe cursor is now {spinner?.cursor ? 'default' : 'not-allowed'}
 	</pre>
 </div>
 

@@ -99,7 +99,7 @@
 		spinOn = $state<boolean>(false);
 		hidden = $state<boolean>(false);
 		disabled = $state<boolean>(false);
-		cursor = $state<boolean>(false);
+		cursor = $state<boolean>(true);
 		color = $state<string>('');
 		duration = '';
 		size = '';
@@ -122,7 +122,7 @@
 			spinOn: boolean = false,
 			hidden: boolean = false,
 			disabled: boolean = false,
-			cursor: boolean = false,
+			cursor: boolean = true,
 			color: string = 'tomato',
 			duration: string = '1.5s',
 			size: string = '1em',
@@ -199,11 +199,11 @@
 		height = '2rem'
 	}: ButtonSpinner = $props();
 	// ------------------------------------------
-	onMount(() => {
-		let width = 'width';
-		// button.style[width] = '14rem'
-		console.log(button.style);
-	});
+	// onMount(() => {
+	// 	let width = 'width';
+	// 	button.style[width] = '14rem'
+	// 	console.log(button.style);
+	// });
 </script>
 
 {#snippet _spinner(color: string)}
@@ -228,7 +228,7 @@
 		style:display={spinner.hidden ? 'none' : 'block'}
 		{formaction}
 		{disabled}
-		style:cursor={cursor ? 'pointer' : 'not-allowed'}
+		style:cursor={spinner.cursor ? 'pointer' : 'not-allowed'}
 		style:width={spinner.width ?? 'max-content'}
 		style:height={spinner.height ?? '2rem'}
 		style:padding="4px 1.5rem"
@@ -241,9 +241,19 @@
 		{spinner.caption ?? caption}
 	</button>
 </p>
-<p>spinner.color {spinner.color}</p>
+
+<div class="info">
+	spinner.color {spinner.color}
+	{spinner.cursor}
+</div>
 
 <style>
+	.info {
+		width: max-content;
+		padding: 2px 1rem;
+		color: white;
+		background-color: 'tomato';
+	}
 	.spinner {
 		position: absolute;
 		display: inline-block;
