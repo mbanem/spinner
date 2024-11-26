@@ -66,9 +66,8 @@
 		}, 2000);
 	};
 	const spinWithRandomColor = (event: MouseEvent) => {
-		// loading = !loading;
-		spinner.spinOn = !spinner.spinOn;
-		spinner.caption = spinner.spin === 'button' ? 'spinning...' : 'button';
+		spinner.spinOn = event.type === 'mouseenter';
+		spinner.caption = spinner.caption === 'button' ? 'spinning...' : 'button';
 		if (event.type === 'mouseleave') return;
 		const rgb =
 			[1, 2, 3]
@@ -116,6 +115,8 @@
 	onMount(() => {
 		// get reference to SpinnerSetter instance
 		spinner = buttonSpinner.getSpinner();
+		btnDelete.addEventListener('mouseenter', spinWithRandomColor);
+		btnDelete.addEventListener('mouseleave', spinWithRandomColor);
 	});
 </script>
 
