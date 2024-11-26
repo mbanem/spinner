@@ -120,7 +120,7 @@
 <svelte:head>
 	<title>Button Spinner</title>
 </svelte:head>
-
+<a href="/permissions">Permissions</a><br />
 <pre>
 	Use input box below to enter color in any valid format. Change the spinner and/or
 	ButtonSpinner color to indicate different operations (e.g. red for deleting...)
