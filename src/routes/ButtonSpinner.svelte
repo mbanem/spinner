@@ -92,7 +92,7 @@
 		return obj[property];
 	}
 
-	class SpinnerSetter {
+	export class SpinnerSetter {
 		caption = $state<string>('');
 		button = $state<HTMLButtonElement>();
 		formaction = $state<string>('');
@@ -147,7 +147,7 @@
 	}
 	const spinner = new SpinnerSetter('button');
 	export const getSpinner = () => {
-		return spinner;
+		return spinner as SpinnerSetter;
 	};
 
 	// $inspect(

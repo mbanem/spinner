@@ -2,14 +2,16 @@
 	import { onMount } from 'svelte';
 	import ButtonSpinner from './ButtonSpinner.svelte';
 
-	let B: typeof ButtonSpinner;
-	let spinner: any;
+	let buttonSpinner: ReturnType<typeof ButtonSpinner>;
+
+	let spinner: ReturnType<typeof buttonSpinner.getSpinner>;
 	let btnDelete: HTMLButtonElement;
-	let spinOn = false,
-		disabled = false,
-		// cursor = true,
-		height = '2rem',
-		var_color = 'skyblue';
+
+	// let spinOn = false,
+	// 	disabled = false,
+	// 	// cursor = true,
+	// 	height = '2rem';
+	let var_color = 'skyblue';
 
 	const colors = [
 		'pink',
@@ -113,7 +115,7 @@
 
 	onMount(() => {
 		// get reference to SpinnerSetter instance
-		spinner = B.getSpinner();
+		spinner = buttonSpinner.getSpinner();
 	});
 </script>
 
@@ -156,7 +158,7 @@
 	<button id="action" onclick={toggleAction}>start action</button>
 
 	<ButtonSpinner
-		bind:this={B}
+		bind:this={buttonSpinner}
 		bind:button={btnDelete}
 		caption="new_button"
 		formaction="?/createTodo"
@@ -171,6 +173,10 @@
 		width="11rem"
 		height="3rem"
 	></ButtonSpinner>
+	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
+		click to toggle cursor to 'not-allowed' and then hover over 
+		above button to observe cursor is now {spinner?.cursor ? 'default' : 'not-allowed'}
+	</pre>
 	<div
 		class="div-hover"
 		onmouseenter={spinWithRandomColor}
@@ -179,10 +185,6 @@
 	>
 		Hover over to spin with random spinner color
 	</div>
-	<pre class="div-hover" onclick={cursorNotAllowed} aria-hidden={true}>
-click to toggle cursor to 'not-allowed' and then hover over 
-above button to observe cursor is now {spinner?.cursor ? 'default' : 'not-allowed'}
-	</pre>
 </div>
 
 <style>
