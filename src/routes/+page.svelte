@@ -7,36 +7,29 @@
 	let spinner: ReturnType<typeof buttonSpinner.getSpinner>;
 	let btnDelete: HTMLButtonElement;
 
-	// let spinOn = false,
-	// 	disabled = false,
-	// 	// cursor = true,
-	// 	height = '2rem';
 	let var_color = 'skyblue';
 
 	const colors = [
-		'pink',
-		'rgb(200,1,1)',
-		'rgba(0,0,210,0.5)',
-		'#0000aacc',
-		'hsl(138, 60%, 35%)',
-		'rebeccapurple',
-		'hsl(64, 68%, 40%)',
-		'green',
-		'red',
-		'orange'
+		['pink', 'Dragana'],
+		['rgb(200,1,1)', 'Zeljko'],
+		['rgba(0,0,210,0.5)', 'Filip'],
+		['#0000aacc', 'Matia'],
+		['hsl(138, 60%, 35%)', 'Mia'],
+		['rebeccapurple', 'Marko'],
+		['hsl(64, 68%, 40%)', 'Nikola'],
+		['green', 'Bojana'],
+		['red', 'Jovana'],
+		['orange', 'Milica']
 	];
 	const toggleVisible = () => {
 		spinner.hidden = !spinner.hidden;
-		// btnDelete.style.display = btnDelete.style.display === 'none' ? 'block' : 'none';
 	};
 	const toggleLoading = () => {
-		// loading = !loading;
 		spinner.spinOn = !spinner.spinOn;
 	};
 	const toggleAction = () => {
 		toggleLoading();
-		// NOTE: cannot change spinner color while spinning
-		// spinner.color = spinner.spinOn ? 'red' : 'black'
+
 		btnDelete.style.color = spinner.spinOn ? 'red' : 'black';
 		spinner.width = spinner.width === '10rem' ? '15rem' : '10rem';
 		spinner.caption = spinner.spinOn ? 'Creating...' : 'Create Todo';
@@ -45,21 +38,31 @@
 	};
 
 	// Drag and Drop functionality.
-	// User starts dragging from an element with id
+	// User starts dragging from an element having an id attribute
 	const start = (event: DragEvent) => {
 		event.dataTransfer?.setData('text', (event.target as HTMLSpanElement).id);
 	};
 
-	// element can allow dropping over it
+	// this is only visual indicator that element with attribute ondragover={allowDrop}
+	// allows dropping when dragging over it
 	const allowDrop = (event: DragEvent) => {
 		event.preventDefault();
 	};
+	let fromUser: string; // drag  source holds username to show when dropped
+	// element having the above attribute and ondrop={drop} is where the dragged element could be dropped
+	// drop will deliver only id attribute of the source element, so the drop function have to get
+	// source HTMLElement by id and take some content like innerText or datastore content
 	const drop = (event: DragEvent) => {
 		event.preventDefault();
 		const id = event.dataTransfer?.getData('text') as string;
-		var_color = document.getElementById(id)?.innerText as string;
+		if (!id) return;
+		const el = document.getElementById(id);
+		if (!el) return;
+		fromUser = `from ${el.dataset.username}`;
+		var_color = el?.innerText as string;
 		(event.target as HTMLInputElement).value = var_color;
 		spinner.color = var_color;
+
 		toggleAction();
 		setTimeout(() => {
 			toggleAction();
@@ -137,7 +140,7 @@
     To handle the drag flow, you need some kind of source element (where the drag starts), 
     the data payload (the thing being dragged), and a target (an area to catch the drop). 
   -->
-	Spinner color
+	Spinner color {fromUser}
 	<input
 		id="color_input"
 		type="text"
@@ -146,15 +149,21 @@
 		ondrop={drop}
 		ondragover={allowDrop}
 	/>
-	<p style="margin:0;padding:0;">
-		-- drag and drop yellow color def into input box to start colored spinner for 2 seconds<br />
+	<div style="margin:0;padding:0;">
+		<p>-- drag and drop yellow color def into input box to start colored spinner for 2 seconds</p>
 		{#each colors as color, ix}
 			{#if ix === 5}
 				<span style="display:block;margin-top:8px"></span>
 			{/if}
-			<span id={`c${ix + 1}`} draggable={true} ondragstart={start} aria-hidden={true}>{color}</span>
+			<span
+				id={`c${ix + 1}`}
+				draggable={true}
+				ondragstart={start}
+				aria-hidden={true}
+				data-username={color[1]}>{color[0]}</span
+			>
 		{/each}
-	</p>
+	</div>
 	<br />
 	<button id="action" onclick={toggleAction}>start action</button>
 
@@ -194,6 +203,7 @@
 	}
 	.container {
 		margin-left: 2rem;
+		color: lightgreen;
 	}
 	button {
 		margin: 1rem 0;
@@ -213,6 +223,8 @@
 		margin-right: 10px;
 		border-radius: 8px;
 		border: 1px solid yellow;
+		color: black;
+		line-height: 22px;
 	}
 	.div-hover {
 		width: max-content;

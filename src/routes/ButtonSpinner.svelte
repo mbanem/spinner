@@ -3,29 +3,31 @@
 	ButtonSpinner wraps an HTMLButtonElement named button, so it could be bound to a parent variable say:
     let btnCreate:HTMLButtonElement
     <ButtonSpinner bind:button={btnCreate} ...><ButtonSpinner>
-  and it is the only way to get reference to the embedded button.
-  There is no way for now to get reference via document.querySelector('ButtonSpinner')
-  or document.getElementsByTagName('ButtonSpinner')[0].
+  and it is the only way to get reference to the embedded button. If necessary event listeners could be
+	mounted on button instance like
+		btnCreate.addEventListener('mouseenter', spinTheButton)
+  There is no way for now to get reference via document.querySelector('ButtonSpinner') or
+  document.getElementsByTagName('ButtonSpinner')[0].
 
-	Component <script lang='ts'> blocks cannot export a variable (except modules <script module lang='ts'>)
-	but could export functions that return a variable -- so this component exports getSpinner function
-	so parent component can get an instance of class SpinnerSetter like so
-		import { onMount } from 'svelte'
-		import SpinnerButton from 'usually $lib/components/Button.setter.svelte' 
-		let B:typeof ButtonSpinner
-		let spinner:any
-	As B holds getSpinner function the instance of SpinnerSetter is usually got from onMount
+	Component from its <script lang='ts'> block cannot export a variable (except from <script module lang='ts'>)
+	but it could export functions that return a variable -- so this component exports getSpinner function
+	and parent component can get an instance of a class SpinnerSetter like so
+		import ButtonSpinner from './ButtonSpinner.svelte';
+		let buttonSpinner: ReturnType<typeof ButtonSpinner>;
+		let spinner: ReturnType<typeof buttonSpinner.getSpinner>;
+
+	As buttonSpinner holds getSpinner function the instance of SpinnerSetter is usually got from onMount handler
 		onMount(()=> {
-			spinner = B.getSpinner()
+			spinner = buttonSpinner.getSpinner();
 		})
-	The spinner exposes all the attributes that ButtonSpinner can accept from HTML markup, like
-		<ButtonSpinner bind:button={btnCreate} caption='Create Todo' hidden={false} bind:color={color} ...>
+	The spinner exposes all the attributes that ButtonSpinner can accept as $props() from HTML markup, like
+		<ButtonSpinner bind:button={btnCreate} caption='Create Todo' hidden={false} colo='tomato' ...>
 
 
-	Every attribute could be bound to sibling parent variable, like color above
-		let color = 'skyblue'     // with or without default value, 'skyblue' in this case
-	and the variable could be changed dynamically having impact on <ButtonSpinner> component, except
-	for color variable if spinner is all at the time.
+	Every attribute could be controlled via spinner.<attribute name> like
+		spinner.color = 'skyblue'
+		spinner.spinOn = true
+	
 
 
 
@@ -71,26 +73,15 @@
 <script lang="ts">
 	// import { onMount } from 'svelte';
 
+	// Generic Accessor get attribute value on an instance of type T
+	// NOTE: svelte playground with Runes allows
+	// const setTK = <T extends SpinnerSetter, K extends keyof SpinnerSetter>(obj: T, property: K, val: T[K]): void => {
+	const getTK = <T, K extends keyof T>(obj: T, property: K): T[K] => {
+		return obj[property];
+	};
 	const setTK = <T, K extends keyof T>(obj: T, property: K, val: T[K]): void => {
 		obj[property] = val;
-		// if ('color|size|width|height'.includes(property as string)) {
-		// 	// @ts-expect-error
-		// 	obj.style[property] = val;
-		// }
-		// // else if ('hidden'){
-		// //       obj.style.display = (val ? 'block':'none');
-		// //   }
-		// else if (property === 'cursor') {
-		// 	(obj as HTMLElement).style.cursor = val ? 'default' : 'not-allowed';
-		// } else {
-		// 	obj[property] = val;
-		// }
 	};
-
-	// Generic Accessor get attribute value on an instance of type T
-	function getTK<T, K extends keyof T>(obj: T, property: K): T[K] {
-		return obj[property];
-	}
 
 	export class SpinnerSetter {
 		caption = $state<string>('');
@@ -107,6 +98,8 @@
 		width = $state<string>('');
 		height = $state<string>('');
 
+		// NOTE: svelte playground with Runes allows prop to be set as prop as keyof typeof spinner
+		// of prop as keyof SpinnerSetter
 		get = (prop: string) => {
 			return getTK(spinner, prop);
 		};
@@ -145,6 +138,7 @@
 			this.height = height;
 		}
 	}
+	type SetterProp = keyof SpinnerSetter;
 	const spinner = new SpinnerSetter('button');
 	export const getSpinner = () => {
 		return spinner as SpinnerSetter;
@@ -186,7 +180,7 @@
 	let {
 		caption = 'button',
 		button = $bindable(),
-		formaction,
+		formaction = '?/create',
 		spinOn = $bindable(spinner.spinOn),
 		hidden = $bindable(spinner.hidden),
 		disabled = $bindable(false),
@@ -262,12 +256,10 @@
 			transform: rotate(360deg);
 		}
 	}
-	.hidden {
-		display: none;
-	}
 	.info {
 		width: max-content;
 		padding: 2px 1rem;
+		color: black;
 		background-color: powderblue;
 		text-wrap: nowrap;
 	}
